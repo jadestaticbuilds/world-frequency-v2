@@ -490,7 +490,7 @@ canvas.addEventListener('pointermove', e => {
   lastInteract = performance.now();
   if (pointers.size === 1){
     const dx = e.clientX - prev[0], dy = e.clientY - prev[1];
-    rot -= dx * 0.3; vel = -dx * 0.3;
+    rot += dx * 0.3; vel = dx * 0.3;
     tilt = Math.max(-45, Math.min(55, tilt + dy * 0.2));
   } else if (pointers.size === 2){
     const p = [...pointers.values()], d = Math.hypot(p[0][0]-p[1][0], p[0][1]-p[1][1]);
