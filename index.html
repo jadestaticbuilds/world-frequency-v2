@@ -347,6 +347,46 @@ CITIES.forEach(c => c.stations.forEach(s => { s.city = c.name; s.key = c.name + 
 const ALL_STATIONS = CITIES.flatMap(c => c.stations);
 const REGION_ORDER = ["UK","Europe","North America","Latin America & Caribbean","Africa","Asia-Pacific"];
 
+/* ---- dance expansion: merged in before the globe builds its markers ---- */
+function addStation(cityName, st){
+  const c = CITIES.find(x => x.name === cityName);
+  if (c) c.stations.push(st);
+}
+CITIES.push(
+ { name:"Mannheim", country:"Germany", region:"Europe", lat:49.4875, lon:8.466, freq:"102.9", stations:[
+   { name:"Sunshine Live Techno", genre:"Dance", urls:["https://stream.sunshine-live.de/techno/mp3-192/stream.sunshine-live.de/"] }
+ ]},
+ { name:"Moscow", country:"Russia", region:"Europe", lat:55.7558, lon:37.6173, freq:"106.3", stations:[
+   { name:"Radio Record", genre:"Dance", urls:["https://radiorecord.hostingradio.ru/rr_main96.aacp"] }
+ ]},
+ { name:"Kyiv", country:"Ukraine", region:"Europe", lat:50.4501, lon:30.5234, freq:"106.5", stations:[
+   { name:"Kiss FM Ukraine", genre:"Dance", urls:["https://online.kissfm.ua/KissFM"] }
+ ]},
+ { name:"Madrid", country:"Spain", region:"Europe", lat:40.4168, lon:-3.7038, freq:"104.3", stations:[
+   { name:"LOS40 Dance", genre:"Dance", urls:["https://playerservices.streamtheworld.com/api/livestream-redirect/LOS40_DANCE.mp3"] }
+ ]},
+ { name:"Durban", country:"South Africa", region:"Africa", lat:-29.8587, lon:31.0218, freq:"94.5", stations:[
+   { name:"East Coast Radio", genre:"Dance", urls:["https://live.ecr.co.za/ecrlow.aac"] }
+ ]},
+ { name:"Auckland", country:"New Zealand", region:"Asia-Pacific", lat:-36.8485, lon:174.7633, freq:"106.2", stations:[
+   { name:"George FM", genre:"Dance", urls:["https://mediaworks.streamguys1.com/george_net_icy"] }
+ ]},
+ { name:"Jakarta", country:"Indonesia", region:"Asia-Pacific", lat:-6.2088, lon:106.8456, freq:"102.2", stations:[
+   { name:"Prambors", genre:"Dance", urls:["https://stream.rcs.revma.com/h77wwp48kxcwv"] }
+ ]}
+);
+addStation("London", { name:"Capital Dance", genre:"Dance", urls:["https://icecast.thisisdax.com/CapitalDanceMP3"] });
+addStation("Ibiza", { name:"Ibiza Sonica", genre:"Dance", urls:["https://ibizasonica.streaming-pro.com:8000/ibizasonica"] });
+addStation("Rome", { name:"Radio M2O", genre:"Dance", hls:true, urls:["https://4c4b867c89244861ac216426883d1ad0.msvdn.net/radiom2o/radiom2o/master_ma.m3u8"] });
+addStation("San Francisco", { name:"SomaFM The Trip", genre:"Dance", np:"soma:thetrip", urls:["https://ice2.somafm.com/thetrip-128-mp3","https://ice1.somafm.com/thetrip-128-mp3"] });
+addStation("São Paulo", { name:"Energia 97", genre:"Dance", urls:["https://streaming.inweb.com.br/energia"] });
+addStation("Mexico City", { name:"Beat 100.9", genre:"Dance", urls:["https://playerservices.streamtheworld.com/api/livestream-redirect/XHSONFMAAC.aac"] });
+addStation("Bogotá", { name:"La X", genre:"Dance", urls:["https://www.laxmasmusica.com/static/web_dataNormal.mp3"] });
+addStation("Buenos Aires", { name:"Delta 90.3", genre:"Dance", urls:["https://cdn.instream.audio/:9069/stream"] });
+addStation("Sydney", { name:"Nova 96.9", genre:"Dance", urls:["https://playerservices.streamtheworld.com/api/livestream-redirect/NOVA_969_AAC48.aac"] });
+CITIES.forEach(c => c.stations.forEach(s => { s.city = c.name; if (!s.key) s.key = c.name + "|" + s.name; }));
+ALL_STATIONS.push(...CITIES.flatMap(c => c.stations.filter(s => !ALL_STATIONS.includes(s))));
+
 /* ---------------- globe ---------------- */
 const stage = document.getElementById('stage');
 const canvas = document.getElementById('globe');
