@@ -424,6 +424,28 @@ addStation("San Francisco", { name:"SomaFM cliqhop", genre:"Modern", np:"soma:cl
 CITIES.forEach(c => c.stations.forEach(s => { s.city = c.name; if (!s.key) s.key = c.name + "|" + s.name; }));
 ALL_STATIONS.push(...CITIES.flatMap(c => c.stations.filter(s => !ALL_STATIONS.includes(s))));
 
+/* ---- gap-fill expansion: merged in before the globe builds its markers ---- */
+CITIES.push(
+ { name:"Accra", country:"Ghana", region:"Africa", lat:5.6037, lon:-0.187, freq:"107.9", stations:[
+   { name:"YFM 107.9", genre:"Modern", urls:["https://atunwadigital.streamguys1.com/yfm1079accra"] }
+ ]},
+ { name:"Brisbane", country:"Australia", region:"Asia-Pacific", lat:-27.4698, lon:153.0251, freq:"103.3", stations:[
+   { name:"4ZZZ", genre:"Modern", urls:["https://iheart.4zzz.org.au/4zzz"] }
+ ]},
+ { name:"Prague", country:"Czechia", region:"Europe", lat:50.0755, lon:14.4378, freq:"91.9", stations:[
+   { name:"Radio 1", genre:"Modern", urls:["https://icecast2.play.cz/radio1.mp3"] }
+ ]},
+ { name:"Zurich", country:"Switzerland", region:"Europe", lat:47.3769, lon:8.5417, freq:"105.7", stations:[
+   { name:"GDS.FM", genre:"Modern", urls:["https://gdsfm.out.airtime.pro:8000/gdsfm_a"] }
+ ]},
+ { name:"Hamburg", country:"Germany", region:"Europe", lat:53.5511, lon:9.9937, freq:"98.5", stations:[
+   { name:"ByteFM", genre:"Modern", urls:["https://bytefm.cast.addradio.de/bytefm/main/high/stream"] }
+ ]}
+);
+addStation("Los Angeles", { name:"KCRW Eclectic24", genre:"Modern", urls:["https://streams.kcrw.com/e24_mp3"] });
+CITIES.forEach(c => c.stations.forEach(s => { s.city = c.name; if (!s.key) s.key = c.name + "|" + s.name; }));
+ALL_STATIONS.push(...CITIES.flatMap(c => c.stations.filter(s => !ALL_STATIONS.includes(s))));
+
 /* ---------------- globe ---------------- */
 const stage = document.getElementById('stage');
 const canvas = document.getElementById('globe');
