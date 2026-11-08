@@ -124,6 +124,8 @@
   .tile.g-Jazz { background:linear-gradient(140deg, #7a2b3a, #e0654f); }
   .tile.g-World { background:linear-gradient(140deg, #0b4f5c, #19b8a6); }
   .tile.g-Modern { background:linear-gradient(140deg, #0f5132, #00a86b); }
+  .tile.g-Reggae { background:linear-gradient(140deg, #6d1a1a, #c9920e); }
+  .tile.g-HipHop { background:linear-gradient(140deg, #1c2340, #7b5cff); }
   .stRow .info { flex:1; min-width:0; }
   .stRow .nm { font-size:15.5px; font-weight:700; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
   .stRow .mt { font-size:11px; color:#8fb8a2; margin-top:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
@@ -446,6 +448,16 @@ addStation("Los Angeles", { name:"KCRW Eclectic24", genre:"Modern", urls:["https
 CITIES.forEach(c => c.stations.forEach(s => { s.city = c.name; if (!s.key) s.key = c.name + "|" + s.name; }));
 ALL_STATIONS.push(...CITIES.flatMap(c => c.stations.filter(s => !ALL_STATIONS.includes(s))));
 
+/* ---- genre expansion: reggae + hip hop anchors ---- */
+addStation("Kingston", { name:"Alpha Boys School Radio", genre:"Reggae", urls:["https://alphaboys-live.streamguys1.com/alphaboys.aac"] });
+addStation("San Francisco", { name:"SomaFM Heavyweight Reggae", genre:"Reggae", np:"soma:reggae", urls:["https://ice2.somafm.com/reggae-256-mp3","https://ice1.somafm.com/reggae-256-mp3"] });
+addStation("San Francisco", { name:"SomaFM Fluid", genre:"Hip Hop", np:"soma:fluid", urls:["https://ice6.somafm.com/fluid-128-mp3","https://ice1.somafm.com/fluid-128-mp3"] });
+addStation("London", { name:"BBC Radio 1Xtra", genre:"Hip Hop", hls:true, urls:["https://as-hls-ww-live.akamaized.net/pool_92079267/live/ww/bbc_1xtra/bbc_1xtra.isml/bbc_1xtra-audio%3d128000.norewind.m3u8"] });
+addStation("New York", { name:"Hot 97", genre:"Hip Hop", urls:["https://18313.live.streamtheworld.com/WQHTFMAAC.aac"] });
+addStation("New York", { name:"Power 105.1", genre:"Hip Hop", urls:["https://stream.revma.ihrhls.com/zc1481"] });
+CITIES.forEach(c => c.stations.forEach(s => { s.city = c.name; if (!s.key) s.key = c.name + "|" + s.name; }));
+ALL_STATIONS.push(...CITIES.flatMap(c => c.stations.filter(s => !ALL_STATIONS.includes(s))));
+
 /* ---------------- globe ---------------- */
 const stage = document.getElementById('stage');
 const canvas = document.getElementById('globe');
@@ -613,7 +625,7 @@ function stationRow(st){
   r.setAttribute('role', 'button');
   r.dataset.key = st.key;
   const tile = document.createElement('span');
-  tile.className = 'tile g-' + (st.genre || 'Modern');
+  tile.className = 'tile g-' + (st.genre || 'Modern').replace(/\s+/g, '');
   tile.textContent = initials(st.name);
   if (st.favicon){
     const img = document.createElement('img');
