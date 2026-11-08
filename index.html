@@ -387,6 +387,43 @@ addStation("Sydney", { name:"Nova 96.9", genre:"Dance", urls:["https://playerser
 CITIES.forEach(c => c.stations.forEach(s => { s.city = c.name; if (!s.key) s.key = c.name + "|" + s.name; }));
 ALL_STATIONS.push(...CITIES.flatMap(c => c.stations.filter(s => !ALL_STATIONS.includes(s))));
 
+/* ---- eclectic expansion: merged in before the globe builds its markers ---- */
+CITIES.push(
+ { name:"Bristol", country:"United Kingdom", region:"UK", lat:51.4545, lon:-2.5879, freq:"101.4", stations:[
+   { name:"Noods Radio", genre:"Modern", urls:["https://noods-radio.radiocult.fm/stream"] }
+ ]},
+ { name:"Cologne", country:"Germany", region:"Europe", lat:50.9375, lon:6.9603, freq:"102.7", stations:[
+   { name:"dublab DE", genre:"Modern", urls:["https://dublabde.out.airtime.pro/dublabde_a"] }
+ ]},
+ { name:"Lyon", country:"France", region:"Europe", lat:45.764, lon:4.8357, freq:"105.3", stations:[
+   { name:"LYL Radio", genre:"Modern", urls:["https://icecast.lyl.live/live"] }
+ ]},
+ { name:"Milan", country:"Italy", region:"Europe", lat:45.4642, lon:9.19, freq:"106.6", stations:[
+   { name:"Radio Raheem", genre:"Modern", urls:["https://radioraheem.out.airtime.pro/radioraheem_a"] }
+ ]},
+ { name:"Melbourne", country:"Australia", region:"Asia-Pacific", lat:-37.8136, lon:144.9631, freq:"102.7", stations:[
+   { name:"3RRR", genre:"Modern", urls:["https://realtime.rrr.org.au/p1h"] },
+   { name:"PBS 106.7", genre:"Modern", urls:["https://playerservices.streamtheworld.com/api/livestream-redirect/3PBS_FMAACHIGH.aac"] }
+ ]},
+ { name:"Austin", country:"United States", region:"North America", lat:30.2672, lon:-97.7431, freq:"98.9", stations:[
+   { name:"KUTX", genre:"Modern", urls:["https://streams.kut.org/4428_192.mp3"] }
+ ]}
+);
+addStation("London", { name:"Worldwide FM", genre:"Modern", urls:["https://worldwide-fm.radiocult.fm/stream"] });
+addStation("London", { name:"Soho Radio", genre:"Modern", urls:["https://sohoradiomusic.doughunt.co.uk:8010/320mp3"] });
+addStation("London", { name:"Foundation FM", genre:"Modern", urls:["https://streamer.radio.co/s0628bdd53/listen"] });
+addStation("London", { name:"Select Radio", genre:"Dance", urls:["https://streaming05.liveboxstream.uk/proxy/selectr1/stream"] });
+addStation("Lisbon", { name:"Rádio Quântica", genre:"Modern", urls:["https://libretime.radioquantica.com/main.mp3"] });
+addStation("Brussels", { name:"Kiosk Radio", genre:"Modern", urls:["https://kioskradiobxl.out.airtime.pro/kioskradiobxl_b"] });
+addStation("Berlin", { name:"Cashmere Radio", genre:"Modern", urls:["https://cashmereradio.out.airtime.pro/cashmereradio_b"] });
+addStation("New York", { name:"WFMU", genre:"Modern", urls:["https://stream2.wfmu.org/freeform-high.aac"] });
+addStation("Mexico City", { name:"Ibero 90.9", genre:"Modern", urls:["https://noasrv.caster.fm:10182/live"] });
+addStation("Auckland", { name:"95bFM", genre:"Modern", urls:["https://streams.95bfm.com/stream95"] });
+addStation("San Francisco", { name:"Frisky Radio", genre:"Dance", urls:["https://stream.frisky.friskyradio.com/","https://stream.frisky.friskyradio.com/mp3_low"] });
+addStation("San Francisco", { name:"SomaFM cliqhop", genre:"Modern", np:"soma:cliqhop", urls:["https://ice2.somafm.com/cliqhop-128-mp3","https://ice1.somafm.com/cliqhop-128-mp3"] });
+CITIES.forEach(c => c.stations.forEach(s => { s.city = c.name; if (!s.key) s.key = c.name + "|" + s.name; }));
+ALL_STATIONS.push(...CITIES.flatMap(c => c.stations.filter(s => !ALL_STATIONS.includes(s))));
+
 /* ---------------- globe ---------------- */
 const stage = document.getElementById('stage');
 const canvas = document.getElementById('globe');
