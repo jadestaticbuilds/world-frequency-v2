@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <meta name="theme-color" content="#030d09">
 <title>World Frequency</title>
 <style>
@@ -45,7 +45,7 @@
   }
   #searchInput::placeholder { color:#648a76; }
   #searchNote { font-size:11px; color:#8fb8a2; margin:7px 2px 0; min-height:14px; }
-  #stage { position:relative; flex:0 0 42%; min-height:245px; }
+  #stage { position:relative; flex:0 0 42%; min-height:245px; touch-action:none; }
   #globe { position:absolute; inset:0; width:100%; height:100%; touch-action:none; display:block; }
   #markers { position:absolute; inset:0; overflow:hidden; pointer-events:none; }
   .marker {
@@ -148,9 +148,9 @@
     box-shadow:0 0 22px rgba(46,230,168,.5);
   }
   #np { flex:1; min-width:0; }
-  #npName { font-size:16px; font-weight:800; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-  #npMeta { font-size:11.5px; color:#8fb8a2; margin-top:1px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-  #npTrack { font-size:12.5px; color:#2ee6a8; margin-top:3px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; min-height:16px; font-weight:600; }
+  #npName { font-size:16px; font-weight:800; overflow-wrap:break-word; }
+  #npMeta { font-size:11.5px; color:#8fb8a2; margin-top:1px; overflow-wrap:break-word; }
+  #npTrack { font-size:12.5px; color:#2ee6a8; margin-top:3px; min-height:16px; font-weight:600; overflow-wrap:break-word; }
   #eq { display:flex; gap:3px; align-items:flex-end; height:12px; margin-top:5px; }
   #eq i { width:4px; height:4px; background:#2ee6a8; border-radius:2px; opacity:.35; }
   #eq.live i { opacity:1; animation:eqb .9s ease-in-out infinite; }
@@ -158,10 +158,6 @@
   #eq.live i:nth-child(4){ animation-delay:.45s; } #eq.live i:nth-child(5){ animation-delay:.6s; }
   @keyframes eqb { 0%,100%{ height:4px; } 50%{ height:12px; } }
   #pctl { display:flex; align-items:center; gap:9px; }
-  #sleepSel {
-    background:rgba(10,30,21,.7); color:#b7d9c7; border:1px solid rgba(46,230,168,.3);
-    border-radius:8px; font-size:11.5px; padding:6px 4px;
-  }
   #vol { width:70px; accent-color:#2ee6a8; }
   #status { font-size:11.5px; color:#8fd8b8; margin-top:9px; min-height:15px; }
   #status.err { color:#ff9d8a; }
@@ -211,12 +207,6 @@
         <div id="eq"><i></i><i></i><i></i><i></i><i></i></div>
       </div>
       <div id="pctl">
-        <select id="sleepSel">
-          <option value="0">Sleep off</option>
-          <option value="15">15 min</option>
-          <option value="30">30 min</option>
-          <option value="60">60 min</option>
-        </select>
         <input type="range" id="vol" min="0" max="1" step="0.05" value="0.9">
       </div>
     </div>
@@ -548,13 +538,13 @@ function tick(){
   if (!document.hidden) drawGlobe();
   requestAnimationFrame(tick);
 }
-canvas.addEventListener('pointerdown', e => {
+stage.addEventListener('pointerdown', e => {
   pointers.set(e.pointerId, [e.clientX, e.clientY]);
-  canvas.setPointerCapture(e.pointerId);
+  stage.setPointerCapture(e.pointerId);
   dragging = true; vel = 0; targetRot = null; lastInteract = performance.now();
   if (pointers.size === 2){ const p = [...pointers.values()]; pinchD = Math.hypot(p[0][0]-p[1][0], p[0][1]-p[1][1]); }
 });
-canvas.addEventListener('pointermove', e => {
+stage.addEventListener('pointermove', e => {
   if (!pointers.has(e.pointerId)) return;
   const prev = pointers.get(e.pointerId);
   pointers.set(e.pointerId, [e.clientX, e.clientY]);
@@ -573,13 +563,14 @@ function endPointer(e){
   pointers.delete(e.pointerId);
   if (!pointers.size){ dragging = false; lastInteract = performance.now(); }
 }
-canvas.addEventListener('pointerup', endPointer);
-canvas.addEventListener('pointercancel', endPointer);
-canvas.addEventListener('wheel', e => {
+stage.addEventListener('pointerup', endPointer);
+stage.addEventListener('pointercancel', endPointer);
+stage.addEventListener('wheel', e => {
   e.preventDefault();
   zoom = Math.max(0.7, Math.min(1.9, zoom * (e.deltaY < 0 ? 1.09 : 0.92)));
   lastInteract = performance.now();
 }, { passive:false });
+document.addEventListener('gesturestart', e => e.preventDefault());
 </script>
 <script>
 "use strict";
@@ -808,15 +799,6 @@ audio.addEventListener('error', () => { if (current && audio.src) failover(playS
 audio.addEventListener('waiting', () => { if (current) setStatus('Buffering ' + current.name + '…'); });
 document.getElementById('vol').addEventListener('input', e => { audio.volume = parseFloat(e.target.value); });
 audio.volume = 0.9;
-let sleepTimer = null;
-document.getElementById('sleepSel').addEventListener('change', e => {
-  clearTimeout(sleepTimer);
-  const mins = parseInt(e.target.value, 10);
-  if (mins > 0){
-    setStatus('Sleep timer set: music stops in ' + mins + ' minutes.');
-    sleepTimer = setTimeout(() => { audio.pause(); setStatus('Sleep timer stopped the music. Good night.'); }, mins * 60000);
-  }
-});
 function updateMediaSession(trackText){
   if (!('mediaSession' in navigator) || !current) return;
   try {
