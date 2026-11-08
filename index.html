@@ -569,7 +569,7 @@ function stationRow(st){
   const tag = document.createElement('span'); tag.className = 'tag'; tag.textContent = st.genre || 'Radio';
   r.append(tile, info, tag, heartBtn(st));
   r.addEventListener('click', () => {
-    if (current && current.key === st.key){ togglePlay(); return; }
+    if (current && current.key === st.key && !deadStream){ togglePlay(); return; }
     playStation(st);
   });
   return r;
@@ -650,7 +650,7 @@ const npMeta = document.getElementById('npMeta');
 const npTrack = document.getElementById('npTrack');
 const eq = document.getElementById('eq');
 const playBtn = document.getElementById('playBtn');
-let current = null, hls = null, playSeq = 0, urlIdx = 0, watchdog = null;
+let current = null, hls = null, playSeq = 0, urlIdx = 0, watchdog = null, urlRetries = 0, slowTimer = null, deadStream = false;
 function setStatus(msg, isErr){
   statusEl.textContent = msg || '';
   statusEl.classList.toggle('err', !!isErr);
@@ -663,19 +663,30 @@ function setPlayingUI(on){
 }
 function failover(seq){
   if (seq !== playSeq || !current) return;
-  urlIdx++;
+  clearTimeout(watchdog); clearTimeout(slowTimer);
+  if (urlRetries < 1){
+    urlRetries++;
+    setStatus('That connection stumbled. Retrying ' + current.name + '…');
+    setTimeout(() => { if (seq === playSeq && current) loadUrl(seq); }, 1200);
+    return;
+  }
+  urlIdx++; urlRetries = 0;
   if (urlIdx < current.urls.length){
     setStatus('That stream did not answer. Trying another route to ' + current.name + '…');
     loadUrl(seq);
   } else {
+    deadStream = true;
     setPlayingUI(false);
     setStatus('Could not reach ' + current.name + ' just now. It may be down, or blocked on this network. Try another station, or search ' + (current.city || 'the directory') + ' for alternates.', true);
   }
 }
 function loadUrl(seq){
   const url = current.urls[urlIdx];
-  clearTimeout(watchdog);
+  clearTimeout(watchdog); clearTimeout(slowTimer);
   watchdog = setTimeout(() => failover(seq), 15000);
+  slowTimer = setTimeout(() => {
+    if (seq === playSeq && current) setStatus('Still tuning… ' + current.name + ' is far away, and a first connect can take a few seconds.');
+  }, 6000);
   if (hls){ hls.destroy(); hls = null; }
   if (current.hls && url.indexOf('.m3u8') >= 0){
     if (window.Hls && Hls.isSupported()){
@@ -685,16 +696,17 @@ function loadUrl(seq){
       hls.on(Hls.Events.ERROR, (e, d) => { if (seq === playSeq && d && d.fatal) failover(seq); });
       return;
     }
-    if (audio.canPlayType('application/vnd.apple.mpegurl')){ audio.src = url; }
+    if (audio.canPlayType('application/vnd.apple.mpegurl')){ audio.src = url; audio.load(); }
     else { failover(seq); return; }
   } else {
     audio.src = url;
+    audio.load();
   }
   const p = audio.play();
   if (p && p.catch) p.catch(() => failover(seq));
 }
 function playStation(st){
-  current = st; urlIdx = 0;
+  current = st; urlIdx = 0; urlRetries = 0; deadStream = false;
   const seq = ++playSeq;
   stopNp();
   npTrack.textContent = '';
@@ -707,6 +719,7 @@ function playStation(st){
 }
 function togglePlay(){
   if (!current){ setStatus('Pick a city, then a station, and it plays.'); return; }
+  if (deadStream){ playStation(current); return; }
   if (audio.paused){
     const p = audio.play();
     if (p && p.catch) p.catch(() => setStatus('Could not resume. Tap the station again.', true));
@@ -714,7 +727,8 @@ function togglePlay(){
 }
 playBtn.addEventListener('click', togglePlay);
 audio.addEventListener('playing', () => {
-  clearTimeout(watchdog);
+  clearTimeout(watchdog); clearTimeout(slowTimer);
+  deadStream = false; urlRetries = 0;
   setPlayingUI(true);
   if (current){ setStatus('Live · ' + current.name + (current.city ? ' · ' + current.city : '')); startNp(current); }
 });
