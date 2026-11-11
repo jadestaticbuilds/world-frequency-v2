@@ -448,6 +448,23 @@ addStation("New York", { name:"Hot 97", genre:"Hip Hop", urls:["https://18313.li
 addStation("New York", { name:"Power 105.1", genre:"Hip Hop", urls:["https://stream.revma.ihrhls.com/zc1481"] });
 CITIES.forEach(c => c.stations.forEach(s => { s.city = c.name; if (!s.key) s.key = c.name + "|" + s.name; }));
 ALL_STATIONS.push(...CITIES.flatMap(c => c.stations.filter(s => !ALL_STATIONS.includes(s))));
+/* ---- caribbean expansion: George's picks, Nov 10 2026 ---- */
+CITIES.push(
+ { name:"San Juan", country:"Puerto Rico", region:"Latin America & Caribbean", lat:18.4655, lon:-66.1057, freq:"93.7", stations:[
+   { name:"Zeta 93", genre:"Salsa", urls:["https://liveaudio.lamusica.com/PR_WZNT_icy"] }
+ ]},
+ { name:"Santo Domingo", country:"Dominican Republic", region:"Latin America & Caribbean", lat:18.4861, lon:-69.9312, freq:"96.5", stations:[
+   { name:"Ritmo 96", genre:"Pop", urls:["https://stream-49.zeno.fm/y0br5ck4ququv"] },
+   { name:"La Bakana 105.7", genre:"Bachata", urls:["https://stream-291.surfernetwork.com/f3nffca3jsfuv"] }
+ ]},
+ { name:"Havana", country:"Cuba", region:"Latin America & Caribbean", lat:23.1136, lon:-82.3666, freq:"96.7", stations:[
+   { name:"Radio Rebelde", genre:"Latin", urls:["https://securestreams7.autopo.st/?uri=https://icecast.teveo.cu/kHKL7tWd"] }
+ ]}
+);
+addStation("Kingston", { name:"Zip 103 FM", genre:"Dancehall", urls:["https://stream-145.zeno.fm/4fazmm93yceuv"] });
+addStation("Kingston", { name:"Fame 95 FM", genre:"Reggae", urls:["https://stream.zeno.fm/d5mn12bchkeuv"] });
+CITIES.forEach(c => c.stations.forEach(s => { s.city = c.name; if (!s.key) s.key = c.name + "|" + s.name; }));
+ALL_STATIONS.push(...CITIES.flatMap(c => c.stations.filter(s => !ALL_STATIONS.includes(s))));
 
 /* ---------------- globe ---------------- */
 const stage = document.getElementById('stage');
